@@ -30,6 +30,8 @@ class UserActor(name: String) extends Actor with ActorLogging {
       count = count + 1
       context.actorSelection("/user/supervisor/newspaper") ! NewspaperActor.UserAteFromStart(name, count)
       context.parent ! UserAte(name)
+
+    case _ => log.warning("Unknown message is received")
   }
 
 }

@@ -34,6 +34,8 @@ class CompanyActor(name: String) extends Actor with ActorLogging {
       log.info("CreateUser message is received with name: {}", userName)
       count = count + 1
       context.actorSelection("/user/supervisor/newspaper") ! NewspaperActor.CompanyAteFromStart(name, count)
+
+    case _ => log.warning("Unknown message is received")
   }
 
 }
