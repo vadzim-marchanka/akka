@@ -20,7 +20,7 @@ class CompanyActor(name: String) extends Actor with ActorLogging {
   override def preStart(): Unit = {
     log.info("{} company actor started", name)
 
-    context.actorSelection("/user/supervisor/newspaper") ! NewspaperActor.AnnounceCompanyCreated(name)
+    ActorSelector.select(context, "/user/supervisor/newspaper") ! NewspaperActor.AnnounceCompanyCreated(name)
   }
 
   override def postStop(): Unit = log.info("{} company actor stopped", name)
