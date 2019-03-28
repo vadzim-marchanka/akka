@@ -26,7 +26,7 @@ class SupervisorActorSpec(_system: ActorSystem) extends TestKit(_system)
       supervisor ! CreateCompany("IBM")
       supervisor ! CreateCompany("Aeroflot")
 
-      Thread.sleep(2000)
+      Thread.sleep(1000)
 
       system.actorSelection("/user/supervisor/apple") ! CreateUser("user1")
       system.actorSelection("/user/supervisor/apple") ! CreateUser("user2")
@@ -43,7 +43,7 @@ class SupervisorActorSpec(_system: ActorSystem) extends TestKit(_system)
       system.actorSelection("/user/supervisor/aeroflot") ! CreateUser("user11")
       system.actorSelection("/user/supervisor/aeroflot") ! CreateUser("user12")
 
-      Thread.sleep(4000)
+      Thread.sleep(1000)
 
       system.actorSelection("/user/supervisor/apple/user4") ! Eat()
       system.actorSelection("/user/supervisor/apple/user4") ! Eat()
