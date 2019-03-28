@@ -8,8 +8,8 @@ object UserActor{
 
 class UserActor(name:String) extends Actor with ActorLogging{
 
-  override def preStart(): Unit = log.info(s"UserActor $name actor started")
-  override def postStop(): Unit = log.info(s"UserActor $name actor stopped")
+  override def preStart(): Unit = log.info("{} user actor started", name)
+  override def postStop(): Unit = log.info("{} user actor stopped", name)
 
   override def receive: Receive = Actor.emptyBehavior
 

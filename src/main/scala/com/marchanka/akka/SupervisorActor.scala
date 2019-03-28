@@ -16,7 +16,7 @@ class SupervisorActor extends Actor with ActorLogging{
 
   override def receive: Receive = {
     case CreateCompany(name) =>
-      log.info("Request is recieved with name = " + name)
+      log.info("Create company request is received with name {}", name)
       context.actorOf(CompanyActor.props(name), name)
   }
 

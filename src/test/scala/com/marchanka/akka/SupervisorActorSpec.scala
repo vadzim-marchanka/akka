@@ -32,15 +32,15 @@ class SupervisorActorSpec(_system: ActorSystem) extends TestKit(_system)
       system.actorSelection("/user/$a/Apple") ! CreateUser("user3")
       system.actorSelection("/user/$a/Apple") ! CreateUser("user4")
 
-      system.actorSelection("/user/$a/IBM") ! CreateUser("user1")
-      system.actorSelection("/user/$a/IBM") ! CreateUser("user2")
-      system.actorSelection("/user/$a/IBM") ! CreateUser("user3")
-      system.actorSelection("/user/$a/IBM") ! CreateUser("user4")
+      system.actorSelection("/user/$a/IBM") ! CreateUser("user5")
+      system.actorSelection("/user/$a/IBM") ! CreateUser("user6")
+      system.actorSelection("/user/$a/IBM") ! CreateUser("user7")
+      system.actorSelection("/user/$a/IBM") ! CreateUser("user8")
 
-      system.actorSelection("/user/$a/Aeroflot") ! CreateUser("user1")
-      system.actorSelection("/user/$a/Aeroflot") ! CreateUser("user2")
-      system.actorSelection("/user/$a/Aeroflot") ! CreateUser("user3")
-      system.actorSelection("/user/$a/Aeroflot") ! CreateUser("user4")
+      system.actorSelection("/user/$a/Aeroflot") ! CreateUser("user9")
+      system.actorSelection("/user/$a/Aeroflot") ! CreateUser("user10")
+      system.actorSelection("/user/$a/Aeroflot") ! CreateUser("user11")
+      system.actorSelection("/user/$a/Aeroflot") ! CreateUser("user12")
 
 
     }

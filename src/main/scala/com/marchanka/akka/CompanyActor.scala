@@ -11,11 +11,12 @@ object CompanyActor {
 
 class CompanyActor(name: String) extends Actor with ActorLogging{
 
-  override def preStart(): Unit = log.info(s"Company $name actor started")
-  override def postStop(): Unit = log.info(s"Company $name actor stopped")
+  override def preStart(): Unit = log.info("{} company actor started", name)
+  override def postStop(): Unit = log.info("{} company actor stopped", name)
 
   override def receive: Receive = {
     case CreateUser(userName) =>
+      log.info("Create user request is received with name: {}", userName)
       context.actorOf(UserActor.props(userName), userName)
   }
 
