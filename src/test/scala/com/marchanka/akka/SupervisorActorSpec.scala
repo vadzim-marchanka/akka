@@ -27,20 +27,20 @@ class SupervisorActorSpec(_system: ActorSystem) extends TestKit(_system)
 
       Thread.sleep(1000)
 
-      system.actorSelection("/user/supervisor/Apple") ! CreateUser("user1")
-      system.actorSelection("/user/supervisor/Apple") ! CreateUser("user2")
-      system.actorSelection("/user/supervisor/Apple") ! CreateUser("user3")
-      system.actorSelection("/user/supervisor/Apple") ! CreateUser("user4")
+      system.actorSelection("/user/supervisor/apple") ! CreateUser("user1")
+      system.actorSelection("/user/supervisor/apple") ! CreateUser("user2")
+      system.actorSelection("/user/supervisor/apple") ! CreateUser("user3")
+      system.actorSelection("/user/supervisor/apple") ! CreateUser("user4")
 
-      system.actorSelection("/user/supervisor/IBM") ! CreateUser("user5")
-      system.actorSelection("/user/supervisor/IBM") ! CreateUser("user6")
-      system.actorSelection("/user/supervisor/IBM") ! CreateUser("user7")
-      system.actorSelection("/user/supervisor/IBM") ! CreateUser("user8")
+      system.actorSelection("/user/supervisor/ibm") ! CreateUser("user5")
+      system.actorSelection("/user/supervisor/ibm") ! CreateUser("user6")
+      system.actorSelection("/user/supervisor/ibm") ! CreateUser("user7")
+      system.actorSelection("/user/supervisor/ibm") ! CreateUser("user8")
 
-      system.actorSelection("/user/supervisor/Aeroflot") ! CreateUser("user9")
-      system.actorSelection("/user/supervisor/Aeroflot") ! CreateUser("user10")
-      system.actorSelection("/user/supervisor/Aeroflot") ! CreateUser("user11")
-      system.actorSelection("/user/supervisor/Aeroflot") ! CreateUser("user12")
+      system.actorSelection("/user/supervisor/aeroflot") ! CreateUser("user9")
+      system.actorSelection("/user/supervisor/aeroflot") ! CreateUser("user10")
+      system.actorSelection("/user/supervisor/aeroflot") ! CreateUser("user11")
+      system.actorSelection("/user/supervisor/aeroflot") ! CreateUser("user12")
 
 
     }

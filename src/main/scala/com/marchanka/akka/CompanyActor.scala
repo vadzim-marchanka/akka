@@ -11,12 +11,16 @@ object CompanyActor {
 
 class CompanyActor(name: String) extends Actor with ActorLogging{
 
-  override def preStart(): Unit = log.info("{} company actor started", name)
+  override def preStart(): Unit = {
+    log.info("{} company actor started", name)
+
+    context.actorSelection("/user/supervisor/newspaper") ! NewspaperActor.AnnounceCompanyCreated(name)
+  }
   override def postStop(): Unit = log.info("{} company actor stopped", name)
 
   override def receive: Receive = {
     case CreateUser(userName) =>
-      log.info("Create user request is received with name: {}", userName)
+      log.info("CreateUser message is received with name: {}", userName.toLowerCase)
       context.actorOf(UserActor.props(userName), userName)
   }
 
