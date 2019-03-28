@@ -28,7 +28,7 @@ class CompanyActor(name: String) extends Actor with ActorLogging {
   override def receive: Receive = {
     case CreateUser(userName) =>
       log.info("CreateUser message is received with name: {}", userName)
-      context.actorOf(UserActor.props(userName, self), userName.toLowerCase)
+      context.actorOf(UserActor.props(userName), userName.toLowerCase)
 
     case UserAte(userName) =>
       log.info("CreateUser message is received with name: {}", userName)
