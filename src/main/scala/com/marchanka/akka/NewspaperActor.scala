@@ -7,12 +7,15 @@ object NewspaperActor {
   def props: Props = Props(new NewspaperActor)
 
   final case class AnnounceCompanyCreated(name: String)
+
   final case class AnnounceUserCreated(name: String)
+
 }
 
-class NewspaperActor extends Actor with ActorLogging{
+class NewspaperActor extends Actor with ActorLogging {
 
   override def preStart(): Unit = log.info("Newspaper actor started")
+
   override def postStop(): Unit = log.info("Newspaper actor stopped")
 
   override def receive: Receive = {
