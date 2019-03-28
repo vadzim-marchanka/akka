@@ -1,7 +1,7 @@
 package com.marchanka.akka
 
 import akka.actor.{Actor, ActorLogging, Props}
-import com.marchanka.akka.CompanyActor.CreateUser
+import com.marchanka.akka.CompanyActor.{CreateUser, UserAte}
 
 object CompanyActor {
 
@@ -9,9 +9,13 @@ object CompanyActor {
 
   final case class CreateUser(name: String)
 
+  final case class UserAte(name: String)
+
 }
 
 class CompanyActor(name: String) extends Actor with ActorLogging {
+
+  var count = 0
 
   override def preStart(): Unit = {
     log.info("{} company actor started", name)
@@ -23,8 +27,13 @@ class CompanyActor(name: String) extends Actor with ActorLogging {
 
   override def receive: Receive = {
     case CreateUser(userName) =>
-      log.info("CreateUser message is received with name: {}", userName.toLowerCase)
-      context.actorOf(UserActor.props(userName), userName)
+      log.info("CreateUser message is received with name: {}", userName)
+      context.actorOf(UserActor.props(userName, self), userName.toLowerCase)
+
+    case UserAte(userName) =>
+      log.info("CreateUser message is received with name: {}", userName)
+      count = count + 1
+      context.actorSelection("/user/supervisor/newspaper") ! NewspaperActor.CompanyAteFromStart(name, count)
   }
 
 }

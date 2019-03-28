@@ -1,18 +1,9 @@
 package com.marchanka.akka
 
 import akka.actor.{Actor, ActorLogging, Props}
-
-object SupervisorActor {
-
-  def props: Props = Props(new SupervisorActor)
-
-  final case class CreateCompany(name: String)
-
-}
+import com.marchanka.akka.SupervisorActor.CreateCompany
 
 class SupervisorActor extends Actor with ActorLogging {
-
-  import SupervisorActor._
 
   override def preStart(): Unit = {
     log.info("Supervisor actor started")
@@ -28,5 +19,13 @@ class SupervisorActor extends Actor with ActorLogging {
       log.info("CreateCompany message is received with name {}", name)
       context.actorOf(CompanyActor.props(name), name.toLowerCase)
   }
+
+}
+
+object SupervisorActor {
+
+  def props: Props = Props(new SupervisorActor)
+
+  final case class CreateCompany(name: String)
 
 }
