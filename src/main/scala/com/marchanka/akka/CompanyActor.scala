@@ -1,7 +1,8 @@
 package com.marchanka.akka
 
-import akka.actor.{Actor, ActorLogging, Props}
-import com.marchanka.akka.CompanyActor.{CreateUser, UserAte}
+import akka.actor.{ActorLogging, Props}
+import akka.persistence.PersistentActor
+import com.marchanka.akka.CompanyActor.{CreateUser, PersistentEvent, State, UserAte}
 
 object CompanyActor {
 
@@ -11,11 +12,28 @@ object CompanyActor {
 
   final case class UserAte(name: String)
 
+  case class PersistentEvent(data: String)
+
+  case class State(events: List[String] = Nil) {
+    def updated(evt: PersistentEvent): State = copy(evt.data :: events)
+
+    def size: Int = events.length
+
+    override def toString: String = events.reverse.toString
+  }
+
 }
 
-class CompanyActor(name: String) extends Actor with ActorLogging {
+class CompanyActor(name: String) extends PersistentActor with ActorLogging {
 
-  var count = 0
+  override def persistenceId: String = s"company-actor-$name"
+
+  var state = State()
+
+  def updateState(event: PersistentEvent): Unit =
+    state = state.updated(event)
+
+  def count = state.size
 
   override def preStart(): Unit = {
     log.info("{} company actor started", name)
@@ -25,17 +43,27 @@ class CompanyActor(name: String) extends Actor with ActorLogging {
 
   override def postStop(): Unit = log.info("{} company actor stopped", name)
 
-  override def receive: Receive = {
+  override def receiveCommand: Receive = {
     case CreateUser(userName) =>
       log.info("CreateUser message is received with name: {}", userName)
+
       context.actorOf(UserActor.props(userName), userName.toLowerCase)
 
     case UserAte(userName) =>
       log.info("CreateUser message is received with name: {}", userName)
-      count = count + 1
-      context.actorSelection("/user/supervisor/newspaper") ! NewspaperActor.CompanyAteFromStart(name, count)
+
+      persist(PersistentEvent(s"$count")) { event =>
+        log.debug(s"Event persisted ${event.data}")
+
+        updateState(event)
+        context.actorSelection("/user/supervisor/newspaper") ! NewspaperActor.CompanyAteFromStart(name, count)
+      }
 
     case _ => log.warning("Unknown message is received")
+  }
+
+  override def receiveRecover: Receive = {
+    case event: PersistentEvent => updateState(event)
   }
 
 }
