@@ -1,7 +1,7 @@
 package com.marchanka.akka
 
 import akka.actor.{ActorLogging, Props}
-import akka.persistence.PersistentActor
+import akka.persistence.{PersistentActor, SnapshotOffer}
 import com.marchanka.akka.CompanyActor.{CreateUser, PersistentEvent, State, UserAte}
 
 object CompanyActor {
@@ -56,6 +56,9 @@ class CompanyActor(name: String) extends PersistentActor with ActorLogging {
         log.debug(s"Event persisted ${event.data}")
 
         updateState(event)
+        context.system.eventStream.publish(event)
+        if (lastSequenceNr % 50 == 0 && lastSequenceNr != 0) saveSnapshot(state)
+
         context.actorSelection("/user/supervisor/newspaper") ! NewspaperActor.CompanyAteFromStart(name, count)
       }
 
@@ -63,7 +66,15 @@ class CompanyActor(name: String) extends PersistentActor with ActorLogging {
   }
 
   override def receiveRecover: Receive = {
-    case event: PersistentEvent => updateState(event)
+    case event: PersistentEvent =>
+      log.debug(s"Restoring state from event $event")
+
+      updateState(event)
+
+    case SnapshotOffer(_, snapshot: State) =>
+      log.debug(s"Restoring state from snapshot $snapshot")
+
+      state = snapshot
   }
 
 }
