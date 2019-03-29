@@ -3,7 +3,7 @@ package com.marchanka.akka
 import akka.actor.{ActorLogging, Props}
 import akka.persistence.{PersistentActor, SnapshotOffer}
 import com.marchanka.akka.CompanyActor.UserAte
-import com.marchanka.akka.UserActor.{Eat, PersistentEvent, State}
+import com.marchanka.akka.UserActor.{Eat, PersistentEvent}
 
 object UserActor {
 
@@ -13,26 +13,13 @@ object UserActor {
 
   case class PersistentEvent(data: String)
 
-  case class State(events: List[String] = Nil) {
-    def updated(evt: PersistentEvent): State = copy(evt.data :: events)
-
-    def size: Int = events.length
-
-    override def toString: String = events.reverse.toString
-  }
-
 }
 
 class UserActor(name: String) extends PersistentActor with ActorLogging {
 
   override def persistenceId: String = s"user-actor-$name"
 
-  var state = State()
-
-  def updateState(event: PersistentEvent): Unit =
-    state = state.updated(event)
-
-  def count = state.size
+  var counter = 0
 
   override def preStart(): Unit = {
     log.info("{} user actor started", name)
@@ -46,29 +33,27 @@ class UserActor(name: String) extends PersistentActor with ActorLogging {
     case Eat() =>
       log.info("Eat message is received")
 
-      persist(PersistentEvent(s"$count")) { event =>
+      persist(PersistentEvent(s"$counter")) { event =>
         log.debug(s"Event persisted ${event.data}")
 
-        updateState(event)
+        counter = counter + 1
         context.system.eventStream.publish(event)
-        if (lastSequenceNr % 50 == 0 && lastSequenceNr != 0) saveSnapshot(state)
+        if (lastSequenceNr % 10 == 0 && lastSequenceNr != 0) saveSnapshot(counter)
 
-        context.actorSelection("/user/supervisor/newspaper") ! NewspaperActor.UserAteFromStart(name, count)
+        context.actorSelection("/user/supervisor/newspaper") ! NewspaperActor.UserAteFromStart(name, counter)
         context.parent ! UserAte(name)
       }
-
-    case _ => log.warning("Unknown message is received")
   }
 
   override def receiveRecover: Receive = {
     case event: PersistentEvent =>
       log.debug(s"Restoring state from events $event")
 
-      updateState(event)
+      counter = counter + 1
 
-    case SnapshotOffer(_, snapshot: State) =>
+    case SnapshotOffer(_, snapshot: Int) =>
       log.debug(s"Restoring state from snapshot $snapshot")
 
-      state = snapshot
+      counter = snapshot
   }
 }

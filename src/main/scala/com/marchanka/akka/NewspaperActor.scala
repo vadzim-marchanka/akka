@@ -39,8 +39,6 @@ class NewspaperActor extends Actor with ActorLogging {
     case CompanyAteFromStart(name, count) =>
       log.info("CompanyAteFromStart message is received with name={}, count={}", name, count)
       println(s"Company $name users have eaten $count meals so far.")
-
-    case _ => log.warning("Unknown message is received")
   }
 
 }

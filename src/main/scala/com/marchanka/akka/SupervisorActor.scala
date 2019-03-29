@@ -25,8 +25,6 @@ class SupervisorActor extends Actor with ActorLogging {
     case CreateCompany(name) =>
       log.info("CreateCompany message is received with name {}", name)
       context.actorOf(CompanyActor.props(name), name.toLowerCase)
-
-    case _ => log.warning("Unknown message is received")
   }
 
 }

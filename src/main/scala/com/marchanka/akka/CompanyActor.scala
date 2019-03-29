@@ -2,7 +2,7 @@ package com.marchanka.akka
 
 import akka.actor.{ActorLogging, Props}
 import akka.persistence.{PersistentActor, SnapshotOffer}
-import com.marchanka.akka.CompanyActor.{CreateUser, PersistentEvent, State, UserAte}
+import com.marchanka.akka.CompanyActor.{CreateUser, PersistentEvent, UserAte}
 
 object CompanyActor {
 
@@ -14,26 +14,13 @@ object CompanyActor {
 
   case class PersistentEvent(data: String)
 
-  case class State(events: List[String] = Nil) {
-    def updated(evt: PersistentEvent): State = copy(evt.data :: events)
-
-    def size: Int = events.length
-
-    override def toString: String = events.reverse.toString
-  }
-
 }
 
 class CompanyActor(name: String) extends PersistentActor with ActorLogging {
 
   override def persistenceId: String = s"company-actor-$name"
 
-  var state = State()
-
-  def updateState(event: PersistentEvent): Unit =
-    state = state.updated(event)
-
-  def count = state.size
+  var counter: Int = 0
 
   override def preStart(): Unit = {
     log.info("{} company actor started", name)
@@ -52,29 +39,27 @@ class CompanyActor(name: String) extends PersistentActor with ActorLogging {
     case UserAte(userName) =>
       log.info("CreateUser message is received with name: {}", userName)
 
-      persist(PersistentEvent(s"$count")) { event =>
+      persist(PersistentEvent(s"$counter")) { event =>
         log.debug(s"Event persisted ${event.data}")
 
-        updateState(event)
+        counter = counter + 1
         context.system.eventStream.publish(event)
-        if (lastSequenceNr % 50 == 0 && lastSequenceNr != 0) saveSnapshot(state)
+        if (lastSequenceNr % 10 == 0 && lastSequenceNr != 0) saveSnapshot(counter)
 
-        context.actorSelection("/user/supervisor/newspaper") ! NewspaperActor.CompanyAteFromStart(name, count)
+        context.actorSelection("/user/supervisor/newspaper") ! NewspaperActor.CompanyAteFromStart(name, counter)
       }
-
-    case _ => log.warning("Unknown message is received")
   }
 
   override def receiveRecover: Receive = {
     case event: PersistentEvent =>
       log.debug(s"Restoring state from event $event")
 
-      updateState(event)
+      counter = counter + 1
 
-    case SnapshotOffer(_, snapshot: State) =>
+    case SnapshotOffer(_, snapshot: Int) =>
       log.debug(s"Restoring state from snapshot $snapshot")
 
-      state = snapshot
+      counter = snapshot
   }
 
 }
