@@ -38,7 +38,10 @@ class UserActor(name: String) extends PersistentActor with ActorLogging {
 
         counter = counter + 1
         context.system.eventStream.publish(event)
-        if (lastSequenceNr % 10 == 0 && lastSequenceNr != 0) saveSnapshot(counter)
+        if (lastSequenceNr % 10 == 0 && lastSequenceNr != 0) {
+          saveSnapshot(counter)
+          deleteMessages(lastSequenceNr)
+        }
 
         context.actorSelection("/user/supervisor/newspaper") ! NewspaperActor.UserAteFromStart(name, counter)
         context.parent ! UserAte(name)
