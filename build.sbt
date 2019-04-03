@@ -1,4 +1,4 @@
-import sbt.Keys.libraryDependencies
+import sbt.Keys.{libraryDependencies, mainClass}
 
 name := "akka"
 version := "0.1.0"
@@ -41,11 +41,16 @@ lazy val api = (project in file("api")).settings(
 
 lazy val companies = (project in file("companies")).settings(
   name := "companies",
-  libraryDependencies ++= commonDependencies
+  libraryDependencies ++= commonDependencies,
+  test in assembly := {},
+  mainClass in assembly := Some("com.marchanka.akka.company.CompanyApplication"),
+  assemblyJarName in assembly := "company.jar"
 ).dependsOn(api)
 
 lazy val newspaper = (project in file("newspaper")).settings(
   name := "newspaper",
-  libraryDependencies ++= commonDependencies
+  libraryDependencies ++= commonDependencies,
+  mainClass in assembly := Some("com.marchanka.akka.newspaper.NewspaperApplication"),
+  assemblyJarName in assembly := "newspaper.jar"
 ).dependsOn(api)
 

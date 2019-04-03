@@ -54,8 +54,6 @@ class SupervisorActorSpec() extends TestKit(ActorSystem("SupervisorActorSpec"))
       ActorSelector.select(system, "/user/supervisor/aeroflot/user10") ! Eat()
       ActorSelector.select(system, "/user/supervisor/aeroflot/user10") ! Eat()
 
-      Thread.sleep(1000)
-
     }
   }
 
