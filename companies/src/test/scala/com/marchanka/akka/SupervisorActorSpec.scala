@@ -3,9 +3,10 @@ package com.marchanka.akka
 
 import akka.actor.ActorSystem
 import akka.testkit.TestKit
-import com.marchanka.akka.CompanyActor.CreateUser
-import com.marchanka.akka.SupervisorActor.CreateCompany
-import com.marchanka.akka.UserActor.Eat
+import com.marchanka.akka.company.CompanyActor.CreateUser
+import com.marchanka.akka.company.SupervisorActor.CreateCompany
+import com.marchanka.akka.company.UserActor.Eat
+import com.marchanka.akka.company.{ActorSelector, SupervisorActor}
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
 class SupervisorActorSpec() extends TestKit(ActorSystem("SupervisorActorSpec"))

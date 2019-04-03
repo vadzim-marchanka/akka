@@ -1,9 +1,10 @@
-package com.marchanka.akka
+package com.marchanka.akka.company
 
 import akka.actor.{ActorLogging, Props}
 import akka.persistence.{PersistentActor, SnapshotOffer}
-import com.marchanka.akka.CompanyActor.UserAte
-import com.marchanka.akka.UserActor.{Eat, PersistentEvent}
+import com.marchanka.akka.api.NotificationApi.{AnnounceUserCreated, UserAteFromStart}
+import com.marchanka.akka.company.CompanyActor.UserAte
+import com.marchanka.akka.company.UserActor.{Eat, PersistentEvent}
 
 object UserActor {
 
@@ -24,7 +25,7 @@ class UserActor(name: String) extends PersistentActor with ActorLogging {
   override def preStart(): Unit = {
     log.info("{} user actor started", name)
 
-    ActorSelector.select(context, "/user/supervisor/newspaper", 5, 1) ! NewspaperActor.AnnounceUserCreated(name)
+    ActorSelector.select(context, "akka://companies@127.0.0.1:8081/user/newspaper") ! AnnounceUserCreated(name)
   }
 
   override def postStop(): Unit = log.info("{} user actor stopped", name)
@@ -43,7 +44,7 @@ class UserActor(name: String) extends PersistentActor with ActorLogging {
           deleteMessages(lastSequenceNr)
         }
 
-        context.actorSelection("/user/supervisor/newspaper") ! NewspaperActor.UserAteFromStart(name, counter)
+        ActorSelector.select(context, "akka://companies@127.0.0.1:8081/user/newspaper") ! UserAteFromStart(name, counter)
         context.parent ! UserAte(name)
       }
   }

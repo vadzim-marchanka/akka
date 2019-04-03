@@ -1,7 +1,7 @@
-package com.marchanka.akka
+package com.marchanka.akka.company
 
 import akka.actor.{Actor, ActorLogging, Props}
-import com.marchanka.akka.SupervisorActor.CreateCompany
+import com.marchanka.akka.company.SupervisorActor.CreateCompany
 
 object SupervisorActor {
 
@@ -15,8 +15,6 @@ class SupervisorActor extends Actor with ActorLogging {
 
   override def preStart(): Unit = {
     log.info("Supervisor actor started")
-
-    context.actorOf(NewspaperActor.props, "newspaper")
   }
 
   override def postStop(): Unit = log.info("Supervisor actor stopped")

@@ -1,19 +1,12 @@
-package com.marchanka.akka
+package com.marchanka.akka.newspaper
 
 import akka.actor.{Actor, ActorLogging, Props}
-import com.marchanka.akka.NewspaperActor.{AnnounceCompanyCreated, AnnounceUserCreated, CompanyAteFromStart, UserAteFromStart}
+import com.marchanka.akka.api.NotificationApi.{AnnounceCompanyCreated, AnnounceUserCreated, CompanyAteFromStart, UserAteFromStart}
 
 object NewspaperActor {
 
   def props: Props = Props(new NewspaperActor)
 
-  final case class AnnounceCompanyCreated(name: String)
-
-  final case class AnnounceUserCreated(name: String)
-
-  final case class UserAteFromStart(name: String, count: Int)
-
-  final case class CompanyAteFromStart(name: String, count: Int)
 
 }
 

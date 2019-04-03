@@ -1,4 +1,4 @@
-package com.marchanka.akka
+package com.marchanka.akka.company
 
 import akka.actor.{ActorRef, ActorRefFactory}
 
@@ -17,7 +17,7 @@ object ActorSelector {
         case e: Exception => Thread.sleep(period)
       }
     }
-    throw new Exception("Actor can not be selected")
+    throw new Exception(s"Actor can not be selected $path")
   }
 
 }
